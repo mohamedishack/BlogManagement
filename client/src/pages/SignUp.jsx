@@ -48,8 +48,8 @@ const SignUp = () => {
             Blog
           </Link>
           <p className="text-sm mt-5">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae
-            libero ut dolor cumque voluptates? Facere itaque sunt
+            This is demo project. You can signup with your email and password or
+            with google
           </p>
         </div>
         <div className="flex-2">
