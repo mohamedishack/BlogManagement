@@ -1,5 +1,4 @@
 import { Alert, Button, FileInput, Select, TextInput } from 'flowbite-react';
-import { useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import {
@@ -9,24 +8,28 @@ import {
   uploadBytesResumable,
 } from 'firebase/storage';
 import { app } from '../firebase';
+import { useState } from 'react';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { useNavigate } from 'react-router-dom';
-const CreatePost = () => {
+
+export default function CreatePost() {
   const [file, setFile] = useState(null);
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
   const [imageUploadError, setImageUploadError] = useState(null);
   const [formData, setFormData] = useState({});
   const [publishError, setPublishError] = useState(null);
+
   const navigate = useNavigate();
-  const handleUploadImage = async () => {
+
+  const handleUpdloadImage = async () => {
     try {
       if (!file) {
         setImageUploadError('Please select an image');
         return;
       }
+      setImageUploadError(null);
       const storage = getStorage(app);
-      console.log({ storage });
       const fileName = new Date().getTime() + '-' + file.name;
       const storageRef = ref(storage, fileName);
       const uploadTask = uploadBytesResumable(storageRef, file);
@@ -73,7 +76,7 @@ const CreatePost = () => {
 
       if (res.ok) {
         setPublishError(null);
-        // navigate(`/post/${data.slug}`);
+        navigate(`/post/${data.slug}`);
       }
     } catch (error) {
       setPublishError('Something went wrong');
@@ -100,9 +103,9 @@ const CreatePost = () => {
             }
           >
             <option value="uncategorized">Select a category</option>
-            <option value="javascript">Javascript</option>
-            <option value="reactjs">Reactjs</option>
-            <option value="nextjs">Nextjs</option>
+            <option value="javascript">JavaScript</option>
+            <option value="reactjs">React.js</option>
+            <option value="nextjs">Next.js</option>
           </Select>
         </div>
         <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
@@ -116,7 +119,8 @@ const CreatePost = () => {
             gradientDuoTone="purpleToBlue"
             size="sm"
             outline
-            onClick={handleUploadImage}
+            onClick={handleUpdloadImage}
+            disabled={imageUploadProgress}
           >
             {imageUploadProgress ? (
               <div className="w-16 h-16">
@@ -143,9 +147,11 @@ const CreatePost = () => {
           placeholder="Write something..."
           className="h-72 mb-12"
           required
-          onChange={(value) => setFormData({ ...formData, content: value })}
+          onChange={(value) => {
+            setFormData({ ...formData, content: value });
+          }}
         />
-        <Button gradientDuoTone="purpleToPink" type="submit">
+        <Button type="submit" gradientDuoTone="purpleToPink">
           Publish
         </Button>
         {publishError && (
@@ -156,6 +162,4 @@ const CreatePost = () => {
       </form>
     </div>
   );
-};
-
-export default CreatePost;
+}
